@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <ctype.h>
+
+char input[100];
+int index = 0;
+int error = 0;
+
+void consume(char expected) {
+    if (input[index] == expected)
+        index++;
+    else
+        error = 1;
+}
+
+void E();
+void E_prime();
+void T();
+void T_prime();
+void F();
+
+void E() {
+    T();
+    E_prime();
+}
+
+void E_prime() {
+    if (input[index] == '+') {
+        consume('+');
+        T();
+        E_prime();
+    }
+}
+
+void T() {
+    F();
+    T_prime();
+}
+
+void T_prime() {
+    if (input[index] == '*') {
+        consume('*');
+        F();
+        T_prime();
+    }
+}
+
+void F() {
+    if (input[index] == '(') {
+        consume('(');
+        E();
+        consume(')');
+    } else if (isalnum(input[index])) {
+        consume(input[index]);
+    } else {
+        error = 1;
+    }
+}
+
+int main() {
+    while (1) {
+        printf("Enter the string to be checked (or enter '4' to quit): ");
+        scanf("%s", input);
+
+        if (input[0] == '4' && input[1] == '\0')
+            break;
+
+        index = 0;
+        error = 0;
+        E();
+
+        if (input[index] == '\0' && !error) {
+            printf("String is accepted\n");
+        } else {
+            printf("String is not accepted\n");
+        }
+    }
+
+    return 0;
+}
